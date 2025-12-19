@@ -1,0 +1,17 @@
+fastapi
+uvicorn[standard]
+SQLAlchemy
+alembic
+psycopg2-binary
+pydantic
+python-dotenv
+requests
+beautifulsoup4
+spacy
+sentence-transformers
+faiss-cpu
+redis
+rq
+python-multipart
+python-jose[cryptography]
+passlib[bcrypt]

@@ -1,0 +1,20 @@
+{
+  "name": "gem-bid-frontend",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "dev": "npx vite --host",
+    "build": "npx vite build",
+    "preview": "npx vite preview"
+  },
+  "dependencies": {
+    "react": "18.x",
+    "react-dom": "18.x",
+    "axios": "^1.4.0",
+    "react-router-dom": "^6.0.0"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0",
+    "@vitejs/plugin-react": "^4.0.0"
+  }
+}

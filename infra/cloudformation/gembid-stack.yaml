@@ -1,0 +1,25 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: GeM Bid Analyser basic infra (ECR, ECS Cluster, RDS placeholder)
+
+Resources:
+  GembidECRBackend:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: gembid-backend
+
+  GembidECRFrontend:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: gembid-frontend
+
+  GembidECSCluster:
+    Type: AWS::ECS::Cluster
+    Properties:
+      ClusterName: gembid-ecs-cluster
+
+  # Note: For production, add ECS TaskDefinition, Service, ALB, RDS (DB Instance) with Subnets and SecurityGroups.
+Outputs:
+  BackendECR:
+    Value: !Ref GembidECRBackend
+  FrontendECR:
+    Value: !Ref GembidECRFrontend
