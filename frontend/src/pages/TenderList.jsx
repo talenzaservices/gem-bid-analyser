@@ -1,21 +1,38 @@
-import React, {useEffect, useState} from 'react'
-import API from '../services/api'
-import { Link } from 'react-router-dom'
+import { useEffect, useState } from "react";
+import API from "../services/api";
 
-export default function TenderList(){
-  const [tenders, setT] = useState([])
-  useEffect(()=>{
-    API.get('/api/tenders').then(r=> setT(r.data)).catch(console.error)
-  },[])
+export default function TenderList() {
+  const [tenders, setTenders] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    API.get("/api/tenders")
+      .then((res) => {
+        setTenders(res.data);
+      })
+      .catch((err) => {
+        console.error("Error loading tenders", err);
+      })
+      .finally(() => setLoading(false));
+  }, []);
+
+  if (loading) return <p>Loading tenders...</p>;
+
+  if (tenders.length === 0) {
+    return <p>No tenders available yet.</p>;
+  }
+
   return (
     <div>
-      <h3>Tenders</h3>
-      {tenders.length===0 && <p>No tenders yet.</p>}
+      <h2>Available Tenders</h2>
       <ul>
-        {tenders.map(t=> (
-          <li key={t.id}><Link to={`/tenders/${t.id}`}>{t.title}</Link> — Score: {Math.round(t.score)}</li>
+        {tenders.map((t) => (
+          <li key={t.id}>
+            <strong>{t.title}</strong><br />
+            <small>{t.description}</small>
+          </li>
         ))}
       </ul>
     </div>
-  )
+  );
 }

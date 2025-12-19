@@ -1,3 +1,7 @@
-import axios from 'axios'
-const API = axios.create({ baseURL: import.meta.env.VITE_API_BASE || 'http://localhost:8000' })
-export default API
+import axios from "axios";
+
+const API = axios.create({
+  baseURL: "https://gembid-backend-kj2a.onrender.com",
+});
+
+export default API;
