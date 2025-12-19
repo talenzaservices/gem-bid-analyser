@@ -5,3 +5,4 @@ GeM Bid Analyser — local dev instructions.
    docker compose up --build
 3. Backend: http://localhost:8000
    Frontend: http://localhost:5173
+"# gem-bid-analyser" 
