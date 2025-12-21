@@ -1,34 +1,62 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from .db import Base, engine
+from .db import Base, engine, SessionLocal
 from .api import tenders
+from .models import Tender
 
-# Create DB tables
-Base.metadata.create_all(bind=engine)
+app = FastAPI(title="GeM Bid Analyser API")
 
-app = FastAPI(
-    title="GeM Bid Analyser API",
-    version="0.1.0"
-)
-
-# -----------------------------
-# CORS (IMPORTANT)
-# -----------------------------
+# ----------------------------
+# CORS (required for frontend)
+# ----------------------------
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",          # local frontend
-        "https://gembid-backend-kj2a.onrender.com"
-    ],
+    allow_origins=["*"],   # OK for MVP
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# -----------------------------
+# ----------------------------
+# Database setup
+# ----------------------------
+Base.metadata.create_all(bind=engine)
+
+# ----------------------------
+# Seed sample data (ONLY if empty)
+# ----------------------------
+def seed_tenders():
+    db = SessionLocal()
+    try:
+        count = db.query(Tender).count()
+        if count == 0:
+            db.add_all([
+                Tender(
+                    title="Supply of Electrical Cables",
+                    description="Supply and installation of LT electrical cables",
+                    department="CPWD"
+                ),
+                Tender(
+                    title="IT Hardware Procurement",
+                    description="Procurement of laptops and peripherals",
+                    department="Ministry of IT"
+                ),
+                Tender(
+                    title="Security Services Contract",
+                    description="Outsourcing of security guards",
+                    department="Railways"
+                )
+            ])
+            db.commit()
+    finally:
+        db.close()
+
+seed_tenders()
+
+# ----------------------------
 # Routes
-# -----------------------------
+# ----------------------------
 app.include_router(
     tenders.router,
     prefix="/api/tenders",
