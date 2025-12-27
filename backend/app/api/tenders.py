@@ -1,33 +1,24 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
+from app.database import SessionLocal
+from app.models import Tender
 
 router = APIRouter()
 
-# Temporary MVP data
-TENDERS = [
-    {
-        "id": 1,
-        "title": "Supply of Electrical Cables",
-        "department": "Power Ministry"
-    },
-    {
-        "id": 2,
-        "title": "IT Hardware Procurement",
-        "department": "NIC"
-    },
-    {
-        "id": 3,
-        "title": "Security Services Contract",
-        "department": "Indian Railways"
-    }
-]
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
 
 @router.get("/")
-def list_tenders():
-    return TENDERS
+def list_tenders(db: Session = Depends(get_db)):
+    return db.query(Tender).all()
+
 
 @router.get("/{tender_id}")
-def get_tender(tender_id: int):
-    for tender in TENDERS:
-        if tender["id"] == tender_id:
-            return tender
-    return {"error": "Tender not found"}
+def get_tender(tender_id: int, db: Session = Depends(get_db)):
+    return db.query(Tender).filter(Tender.id == tender_id).first()

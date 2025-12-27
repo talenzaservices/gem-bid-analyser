@@ -1,29 +1,32 @@
 from sqlalchemy.orm import Session
-from . import models, schemas
-import json
+from .models import Tender
 
-def create_tender(db: Session, tender: schemas.TenderCreate):
-    db_t = models.Tender(
-        gem_id=tender.gem_id,
-        title=tender.title,
-        department=tender.department,
-        value=tender.value,
-        raw_text=tender.raw_text,
-    )
-    db.add(db_t)
-    db.commit()
-    db.refresh(db_t)
-    return db_t
+def seed_data(db: Session):
+    if db.query(Tender).count() == 0:
+        db.add_all([
+            Tender(
+                gem_id="GEM/2024/001",
+                title="Supply of Electrical Cables",
+                department="Power Ministry",
+                value=1200000,
+                raw_text="Supply and installation of LT electrical cables",
+                extracted="LT cable installation"
+            ),
+            Tender(
+                gem_id="GEM/2024/002",
+                title="IT Hardware Procurement",
+                department="IT Ministry",
+                value=2500000,
+                raw_text="Procurement of laptops and servers",
+                extracted="Laptop + Server procurement"
+            ),
+        ])
+        db.commit()
 
-def get_tenders(db: Session, skip: int = 0, limit: int = 50):
-    return db.query(models.Tender).order_by(models.Tender.created_at.desc()).offset(skip).limit(limit).all()
 
-def update_tender_score(db: Session, tender_id: int, score: float, extracted: dict):
-    t = db.query(models.Tender).get(tender_id)
-    if not t:
-        return None
-    t.score = score
-    t.extracted = json.dumps(extracted)
-    db.commit()
-    db.refresh(t)
-    return t
+def get_all_tenders(db: Session):
+    return db.query(Tender).all()
+
+
+def get_tender_by_id(db: Session, tender_id: int):
+    return db.query(Tender).filter(Tender.id == tender_id).first()
